@@ -12,8 +12,8 @@ using xxx.Repository.Models;
 namespace Cinema.Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240910112617_test3")]
-    partial class test3
+    [Migration("20241005144407_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,36 +33,17 @@ namespace Cinema.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("code")
+                    b.Property<string>("CountryCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("country")
+                    b.Property<string>("CountryName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Countries");
-                });
-
-            modelBuilder.Entity("Cinema.Repository.Models.Details", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AvailableSeats")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Details");
                 });
 
             modelBuilder.Entity("Cinema.Repository.Models.Employee", b =>
@@ -93,7 +74,7 @@ namespace Cinema.Repository.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("Cinema.Repository.Models.Shop", b =>
+            modelBuilder.Entity("Cinema.Repository.Models.Room", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -101,12 +82,36 @@ namespace Cinema.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("RoomNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Shops");
+                    b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("Cinema.Repository.Models.Ticket", b =>
+            modelBuilder.Entity("Cinema.Repository.Models.Seat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("SeatNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SeatRow")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("Cinema.Repository.Models.Show", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,19 +122,42 @@ namespace Cinema.Repository.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<string>("Movie")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoomNumber")
+                    b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Seat")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
 
                     b.Property<TimeOnly>("Time")
                         .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shows");
+                });
+
+            modelBuilder.Entity("Cinema.Repository.Models.Ticket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeatId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShowId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -147,7 +175,7 @@ namespace Cinema.Repository.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -196,13 +224,28 @@ namespace Cinema.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("DurationMinutes")
                         .HasColumnType("real");
 
                     b.Property<int?>("GenreId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPopular")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrailerLink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -211,24 +254,13 @@ namespace Cinema.Repository.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("Movies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DurationMinutes = 51f,
-                            GenreId = 1,
-                            Title = "Fight With The Mongols"
-                        });
                 });
 
             modelBuilder.Entity("xxx.Repository.Models.Movie", b =>
                 {
-                    b.HasOne("xxx.Repository.Models.Genre", "Genre")
+                    b.HasOne("xxx.Repository.Models.Genre", null)
                         .WithMany("Movies")
                         .HasForeignKey("GenreId");
-
-                    b.Navigation("Genre");
                 });
 
             modelBuilder.Entity("xxx.Repository.Models.Genre", b =>

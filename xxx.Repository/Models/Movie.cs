@@ -15,8 +15,9 @@ namespace xxx.Repository.Models
         public string Title { get; set; }
         [Required]
         public float DurationMinutes { get; set; }
-
         public string TrailerLink { get; set; }
+        [Required]
+        public bool IsPopular { get; set; }
         [Required]
         public string Description { get; set; }
         [Required]

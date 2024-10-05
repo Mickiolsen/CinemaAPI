@@ -20,7 +20,7 @@ namespace xxx.Repository.Models
         [Required]
         public string CountryId { get; set; }
 
-        public string Description { get; set; }
+        //public string Description { get; set; }
 
     }
 }

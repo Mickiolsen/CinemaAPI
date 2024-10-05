@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Cinema.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class test2 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace Cinema.Repository.Migrations
                     Firstname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Lastname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CountryId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,26 +33,12 @@ namespace Cinema.Repository.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    code = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CountryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CountryCode = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Countries", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Details",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoomNumber = table.Column<int>(type: "int", nullable: false),
-                    AvailableSeats = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Details", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,15 +71,46 @@ namespace Cinema.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Shops",
+                name: "Rooms",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Shops", x => x.Id);
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Seats",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SeatRow = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SeatNumber = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Seats", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shows",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Time = table.Column<TimeOnly>(type: "time", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shows", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -102,11 +119,11 @@ namespace Cinema.Repository.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Movie = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomNumber = table.Column<int>(type: "int", nullable: false),
-                    Seat = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Time = table.Column<TimeOnly>(type: "time", nullable: false)
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    RoomId = table.Column<int>(type: "int", nullable: false),
+                    SeatId = table.Column<int>(type: "int", nullable: false),
+                    ShowId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,6 +138,10 @@ namespace Cinema.Repository.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DurationMinutes = table.Column<float>(type: "real", nullable: false),
+                    TrailerLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsPopular = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -154,16 +175,19 @@ namespace Cinema.Repository.Migrations
                 name: "Countries");
 
             migrationBuilder.DropTable(
-                name: "Details");
-
-            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Movies");
 
             migrationBuilder.DropTable(
-                name: "Shops");
+                name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "Seats");
+
+            migrationBuilder.DropTable(
+                name: "Shows");
 
             migrationBuilder.DropTable(
                 name: "Tickets");
