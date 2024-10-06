@@ -12,12 +12,7 @@ namespace Cinema.Repository.Models
     {
         public int Id { get; set; }
 
-        public int MovieId { get; set; }
-        public int RoomId { get; set; }
         public int SeatId { get; set; }
         public int ShowId { get; set; }
-
-        [Required]
-        public int Price { get; set; }
     }
 }

@@ -13,5 +13,8 @@ namespace Cinema.Repository.Models
         public int Id { get; set; }
         [Required]
         public string RoomNumber { get; set; }
+
+        public List<Seat> Seats { get; set; }
+        public List<Show> Shows { get; set; }
     }
 }

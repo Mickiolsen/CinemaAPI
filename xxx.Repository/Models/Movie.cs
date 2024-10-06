@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Cinema.Repository.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using xxx.Repository.Interfaces;
 
@@ -23,8 +25,13 @@ namespace xxx.Repository.Models
         [Required]
         public string Image { get; set; }
 
-        //public int? GenreId { get; set; }
 
-       // public Genre Genre { get; set; }
+        [JsonIgnore]
+        public List<Actor> Actors { get; set; }
+
+        [JsonIgnore]
+        public List<Show> Shows { get; set; }
+
+        public int GenreId { get; set; }
     }
 }

@@ -11,12 +11,16 @@ namespace Cinema.Repository.Models
     public class Show : IEntity
     {
         public int Id { get; set; }
-        public int RoomId { get; set; }
-        public int MovieId {  get; set; }
+
         [Required]
         public DateOnly Date {  get; set; }
         [Required]
         public TimeOnly Time { get; set; }
+        [Required]
+        public int Price { get; set; }
+
+        public int RoomId { get; set; }
+        public int MovieId { get; set; }
 
     }
 }
