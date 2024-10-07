@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cinema.Repository.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,9 +20,12 @@ namespace xxx.Repository.Models
         [Required]
         public int Age { get; set; }
 
+
         [JsonIgnore]
         public List<Movie> Movies { get; set; }
+
         public int CountryId { get; set; }
+        public Country country { get; set; }
 
     }
 }

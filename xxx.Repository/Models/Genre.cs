@@ -16,8 +16,9 @@ namespace xxx.Repository.Models
         [Required]
         public string Genretype { get; set; }
 
+
         [JsonIgnore]
-        public List<Movie> Movies { get; set; }
+        public List<Movie>? Movies { get; set; }
 
     }
 }

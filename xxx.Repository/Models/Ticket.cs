@@ -13,6 +13,9 @@ namespace Cinema.Repository.Models
         public int Id { get; set; }
 
         public int SeatId { get; set; }
+       // public Seat seat { get; set; }
+
         public int ShowId { get; set; }
+        //public Show show { get; set; }
     }
 }

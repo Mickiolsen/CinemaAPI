@@ -3,6 +3,9 @@ using xxx.Repository.Interfaces;
 using xxx.Repository.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System;
 
 namespace xxx.API.Controllers
 {
@@ -11,65 +14,114 @@ namespace xxx.API.Controllers
     public class MovieController : ControllerBase
     {
         private readonly ICrudRepository<Movie> _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public MovieController(ICrudRepository<Movie> context)
+        public MovieController(ICrudRepository<Movie> context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: api/Movies
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies()
         {
-            var movies = await _context.GetAll();
-            return Ok(movies);
+            try
+            {
+                var movies = await _context.GetAll();
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving movies: {ex.Message}");
+            }
         }
 
         // GET: api/Movies/5
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetMovieById(int id)
         {
-            var foundMovie = await _context.GetById(id);
-
-            if (foundMovie == null)
+            try
             {
-                return NotFound();
-            }
+                var foundMovie = await _context.GetById(id);
 
-            return Ok(foundMovie);
+                if (foundMovie == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(foundMovie);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the movie with ID {id}: {ex.Message}");
+            }
         }
 
         // POST: api/Movies
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromBody] Movie movie)
+        public async Task<IActionResult> CreateMovie([FromForm] Movie movie)
         {
-            if (movie == null)
+            try
             {
-                return BadRequest("Movie is null.");
-            }
+                if (movie.ImageFile != null)
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(movie.ImageFile.FileName);
+                    var extension = Path.GetExtension(movie.ImageFile.FileName);
+                    var uniqueFileName = $"{fileName}_{DateTime.Now.Ticks}{extension}";
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
 
-            var newMovieCreated = await _context.Create(movie);
-            if (newMovieCreated != null)
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await movie.ImageFile.CopyToAsync(fileStream);
+                    }
+
+                    movie.Image = $"/images/{uniqueFileName}";
+                }
+
+                if (movie == null)
+                {
+                    return BadRequest("Movie is null.");
+                }
+
+                var newMovieCreated = await _context.Create(movie);
+                if (newMovieCreated != null)
+                {
+                    return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+                }
+
+                return BadRequest("Failed to create movie.");
+            }
+            catch (Exception ex)
             {
-                // Return the newly created movie with its URI
-                return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+                return StatusCode(500, $"An error occurred while creating the movie: {ex.Message}");
             }
-
-            return BadRequest("Failed to create movie.");
         }
 
         // DELETE: api/Movies/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteMovieById(int id)
         {
-            var isDeleted = await _context.DeleteById(id);
-
-            if (isDeleted)
+            try
             {
-                return NoContent(); 
-            }
+                var isDeleted = await _context.DeleteById(id);
 
-            return NotFound($"Movie with id {id} not found.");
+                if (isDeleted)
+                {
+                    return NoContent();
+                }
+
+                return NotFound($"Movie with id {id} not found.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the movie with ID {id}: {ex.Message}");
+            }
         }
     }
 }

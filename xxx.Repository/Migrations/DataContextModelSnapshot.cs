@@ -22,6 +22,21 @@ namespace Cinema.Repository.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ActorMovie", b =>
+                {
+                    b.Property<int>("ActorsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ActorsId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("ActorMovie");
+                });
+
             modelBuilder.Entity("Cinema.Repository.Models.Country", b =>
                 {
                     b.Property<int>("Id")
@@ -96,6 +111,9 @@ namespace Cinema.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
                     b.Property<int>("SeatNumber")
                         .HasColumnType("int");
 
@@ -104,6 +122,8 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Seats");
                 });
@@ -122,6 +142,9 @@ namespace Cinema.Repository.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
 
@@ -129,6 +152,10 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("time");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Shows");
                 });
@@ -140,15 +167,6 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int");
 
                     b.Property<int>("SeatId")
                         .HasColumnType("int");
@@ -172,9 +190,8 @@ namespace Cinema.Repository.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
-                    b.Property<string>("CountryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Firstname")
                         .IsRequired()
@@ -185,6 +202,8 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.ToTable("Actors");
                 });
@@ -232,7 +251,6 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsPopular")
@@ -243,7 +261,6 @@ namespace Cinema.Repository.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TrailerLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -253,6 +270,62 @@ namespace Cinema.Repository.Migrations
                     b.ToTable("Movies");
                 });
 
+            modelBuilder.Entity("ActorMovie", b =>
+                {
+                    b.HasOne("xxx.Repository.Models.Actor", null)
+                        .WithMany()
+                        .HasForeignKey("ActorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("xxx.Repository.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Cinema.Repository.Models.Seat", b =>
+                {
+                    b.HasOne("Cinema.Repository.Models.Room", "room")
+                        .WithMany("Seats")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("room");
+                });
+
+            modelBuilder.Entity("Cinema.Repository.Models.Show", b =>
+                {
+                    b.HasOne("xxx.Repository.Models.Movie", "movie")
+                        .WithMany("Shows")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Cinema.Repository.Models.Room", "room")
+                        .WithMany("Shows")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("movie");
+
+                    b.Navigation("room");
+                });
+
+            modelBuilder.Entity("xxx.Repository.Models.Actor", b =>
+                {
+                    b.HasOne("Cinema.Repository.Models.Country", "country")
+                        .WithMany("Actors")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("country");
+                });
+
             modelBuilder.Entity("xxx.Repository.Models.Movie", b =>
                 {
                     b.HasOne("xxx.Repository.Models.Genre", null)
@@ -260,9 +333,26 @@ namespace Cinema.Repository.Migrations
                         .HasForeignKey("GenreId");
                 });
 
+            modelBuilder.Entity("Cinema.Repository.Models.Country", b =>
+                {
+                    b.Navigation("Actors");
+                });
+
+            modelBuilder.Entity("Cinema.Repository.Models.Room", b =>
+                {
+                    b.Navigation("Seats");
+
+                    b.Navigation("Shows");
+                });
+
             modelBuilder.Entity("xxx.Repository.Models.Genre", b =>
                 {
                     b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("xxx.Repository.Models.Movie", b =>
+                {
+                    b.Navigation("Shows");
                 });
 #pragma warning restore 612, 618
         }

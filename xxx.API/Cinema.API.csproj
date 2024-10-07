@@ -18,4 +18,8 @@
     <ProjectReference Include="..\xxx.Repository\Cinema.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

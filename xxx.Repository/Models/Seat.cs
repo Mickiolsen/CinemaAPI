@@ -16,6 +16,8 @@ namespace Cinema.Repository.Models
         [Required]
         public int SeatNumber { get; set; }
 
+
         public int RoomId { get; set; }
+        public Room room { get; set; }
     }
 }
