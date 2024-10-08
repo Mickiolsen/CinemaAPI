@@ -16,8 +16,8 @@ namespace Cinema.Repository.Models
         public string RoomNumber { get; set; }
 
         [JsonIgnore]
-        public List<Seat> Seats { get; set; }
+        public List<Seat> Seats { get; set; } = [];
         [JsonIgnore]
-        public List<Show> Shows { get; set; }
+        public List<Show> Shows { get; set; } = [];
     }
 }

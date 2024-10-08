@@ -22,10 +22,10 @@ namespace xxx.Repository.Models
 
 
         [JsonIgnore]
-        public List<Movie> Movies { get; set; }
+        public List<Movie> Movies { get; set; } = [];
 
         public int CountryId { get; set; }
-        public Country country { get; set; }
+        //public Country country { get; set; }
 
     }
 }

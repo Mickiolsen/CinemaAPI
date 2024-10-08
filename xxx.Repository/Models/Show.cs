@@ -14,18 +14,18 @@ namespace Cinema.Repository.Models
         public int Id { get; set; }
 
         [Required]
-        public DateOnly Date {  get; set; }
+        public DateTime Date {  get; set; }
         [Required]
-        public TimeOnly Time { get; set; }
+        public TimeSpan Time { get; set; }
         [Required]
         public int Price { get; set; }
 
 
         public int RoomId { get; set; }
-        public Room room { get; set; }
+       // public Room room { get; set; }
 
         public int MovieId { get; set; }
-        public Movie movie { get; set; }
+       // public Movie movie { get; set; }
 
     }
 }

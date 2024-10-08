@@ -18,6 +18,6 @@ namespace Cinema.Repository.Models
 
 
         public int RoomId { get; set; }
-        public Room room { get; set; }
+        //public Room room { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using xxx.Repository.Models;
 
@@ -11,9 +12,11 @@ using xxx.Repository.Models;
 namespace Cinema.Repository.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241008084330_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -287,35 +290,43 @@ namespace Cinema.Repository.Migrations
 
             modelBuilder.Entity("Cinema.Repository.Models.Seat", b =>
                 {
-                    b.HasOne("Cinema.Repository.Models.Room", null)
+                    b.HasOne("Cinema.Repository.Models.Room", "room")
                         .WithMany("Seats")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("room");
                 });
 
             modelBuilder.Entity("Cinema.Repository.Models.Show", b =>
                 {
-                    b.HasOne("xxx.Repository.Models.Movie", null)
+                    b.HasOne("xxx.Repository.Models.Movie", "movie")
                         .WithMany("Shows")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Cinema.Repository.Models.Room", null)
+                    b.HasOne("Cinema.Repository.Models.Room", "room")
                         .WithMany("Shows")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("movie");
+
+                    b.Navigation("room");
                 });
 
             modelBuilder.Entity("xxx.Repository.Models.Actor", b =>
                 {
-                    b.HasOne("Cinema.Repository.Models.Country", null)
+                    b.HasOne("Cinema.Repository.Models.Country", "country")
                         .WithMany("Actors")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("country");
                 });
 
             modelBuilder.Entity("xxx.Repository.Models.Movie", b =>

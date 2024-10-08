@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using xxx.Repository.Interfaces;
 using Cinema.Repository.Models;
 using xxx.Repository.Models;
+using Cinema.Repository.Interfaces;
 //using Cin.Repository.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ builder.Services.AddScoped<ICrudRepository<Genre>, GenericRepository<Genre>>();
 builder.Services.AddScoped<ICrudRepository<Actor>, GenericRepository<Actor>>();
 builder.Services.AddScoped<ICrudRepository<Country>, GenericRepository<Country>>();
 builder.Services.AddScoped<ICrudRepository<Ticket>, GenericRepository<Ticket>>();
+
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

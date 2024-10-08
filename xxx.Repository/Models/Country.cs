@@ -18,6 +18,6 @@ namespace Cinema.Repository.Models
         public string CountryCode { get; set; }
 
         [JsonIgnore]
-        public List<Actor> Actors { get; set; }
+        public List<Actor> Actors { get; set; } = [];
     }
 }

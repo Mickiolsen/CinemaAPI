@@ -63,6 +63,17 @@ namespace xxx.Repository.Models
                 );
 
 
+            // Mange-til-mange relationen mellem Movie og Actor
+            modelBuilder.Entity<Movie>()
+                .HasMany(m => m.Actors)
+                .WithMany(a => a.Movies);
+
+            modelBuilder.Entity<Movie>()
+                .HasKey(m => m.Id);
+
+            modelBuilder.Entity<Actor>()
+                .HasKey(a => a.Id);
+
             base.OnModelCreating(modelBuilder);
         }
     }

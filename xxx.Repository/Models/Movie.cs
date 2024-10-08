@@ -1,5 +1,7 @@
 ﻿using Cinema.Repository.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,9 +14,10 @@ using xxx.Repository.Interfaces;
 
 namespace xxx.Repository.Models
 {
-    public class Movie : IEntity
+    public class Movie: IEntity
     {
         public int Id { get; set; }
+
         [Required]
         public string Title { get; set; }
         [Required]
@@ -32,10 +35,10 @@ namespace xxx.Repository.Models
 
 
         [JsonIgnore]
-        public List<Actor>? Actors { get; set; }
+        public List<Actor>? Actors { get; set; } = [];
 
         [JsonIgnore]
-        public List<Show>? Shows { get; set; }
+        public List<Show>? Shows { get; set; } = [];
 
         public int? GenreId { get; set; }
        // [JsonIgnore]

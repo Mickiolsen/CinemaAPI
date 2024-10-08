@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
+using Cinema.Repository.Interfaces;
 
 namespace xxx.API.Controllers
 {
@@ -14,12 +15,14 @@ namespace xxx.API.Controllers
     public class MovieController : ControllerBase
     {
         private readonly ICrudRepository<Movie> _context;
+        private readonly IMovieRepository _context2;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public MovieController(ICrudRepository<Movie> context, IWebHostEnvironment webHostEnvironment)
+        public MovieController(ICrudRepository<Movie> context, IWebHostEnvironment webHostEnvironment, IMovieRepository context2)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _context2 = context2;
         }
 
         // GET: api/Movies
@@ -60,7 +63,7 @@ namespace xxx.API.Controllers
 
         // POST: api/Movies
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromForm] Movie movie)
+        public async Task<IActionResult> CreateMovie([FromBody] Movie movie)
         {
             try
             {
@@ -123,5 +126,46 @@ namespace xxx.API.Controllers
                 return StatusCode(500, $"An error occurred while deleting the movie with ID {id}: {ex.Message}");
             }
         }
+
+
+
+        // GET: api/Movies/with-actors
+        [HttpGet("with-actors")]
+        public async Task<IActionResult> GetAllMoviesWithActors()
+        {
+            try
+            {
+                // Henter alle film med deres tilknyttede skuespillere
+                var movies = await _context2.GetAllMoviesWithActors();
+
+                if (movies == null || movies.Count == 0)
+                {
+                    throw new Exception("No movies found.");
+                }
+
+                return Ok(movies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving movies with actors: {ex.Message}");
+            }
+        }
+
+        // POST: api/Movies/{movieId}/actors/{actorId}
+        [HttpPost("{movieId:int}/actors/{actorId:int}")]
+        public async Task<IActionResult> AddActorToMovie(int movieId, int actorId)
+        {
+            try
+            {
+                // Tilføjer skuespiller til film
+                await _context2.AddActorToMovie(movieId, actorId);
+                return Ok($"Actor with ID {actorId} has been added to movie with ID {movieId}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while adding the actor to the movie: {ex.Message}");
+            }
+        }
+
     }
 }
