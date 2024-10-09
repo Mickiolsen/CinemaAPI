@@ -63,10 +63,17 @@ namespace xxx.API.Controllers
 
         // POST: api/Movies
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromBody] Movie movie)
+        [HttpPost("Movie")]
+        public async Task<IActionResult> CreateMovie([FromForm] Movie movie)
         {
             try
             {
+                if (movie == null)
+                {
+                    return BadRequest("Movie is null.");
+                }
+
+                // Håndterer billedfilen, hvis den er angivet
                 if (movie.ImageFile != null)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(movie.ImageFile.FileName);
@@ -74,27 +81,27 @@ namespace xxx.API.Controllers
                     var uniqueFileName = $"{fileName}_{DateTime.Now.Ticks}{extension}";
                     var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
 
+                    // Opret mappen, hvis den ikke findes
                     if (!Directory.Exists(uploadsFolder))
                         Directory.CreateDirectory(uploadsFolder);
 
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
+                    // Gem billedfilen på serveren
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await movie.ImageFile.CopyToAsync(fileStream);
                     }
 
+                    // Gem filstien i Movie objektet (til senere brug)
                     movie.Image = $"/images/{uniqueFileName}";
                 }
 
-                if (movie == null)
-                {
-                    return BadRequest("Movie is null.");
-                }
-
+                // Gem filmen i databasen (forudsat at _context.Create gemmer i databasen)
                 var newMovieCreated = await _context.Create(movie);
                 if (newMovieCreated != null)
                 {
+                    // Returnerer en succesrespons med den oprettede film
                     return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
                 }
 
@@ -102,11 +109,57 @@ namespace xxx.API.Controllers
             }
             catch (Exception ex)
             {
+                // Returnerer en serverfejl med fejlbesked
                 return StatusCode(500, $"An error occurred while creating the movie: {ex.Message}");
             }
         }
 
+        //public async Task<IActionResult> CreateMovie([FromForm] Movie movie)
+        //{
+        //    try
+        //    {
+        //        if (movie.ImageFile != null)
+        //        {
+        //            var fileName = Path.GetFileNameWithoutExtension(movie.ImageFile.FileName);
+        //            var extension = Path.GetExtension(movie.ImageFile.FileName);
+        //            var uniqueFileName = $"{fileName}_{DateTime.Now.Ticks}{extension}";
+        //            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+
+        //            if (!Directory.Exists(uploadsFolder))
+        //                Directory.CreateDirectory(uploadsFolder);
+
+        //            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+        //            using (var fileStream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                await movie.ImageFile.CopyToAsync(fileStream);
+        //            }
+
+        //            movie.Image = $"/images/{uniqueFileName}";
+        //        }
+
+        //        if (movie == null)
+        //        {
+        //            return BadRequest("Movie is null.");
+        //        }
+
+        //        var newMovieCreated = await _context.Create(movie);
+        //        if (newMovieCreated != null)
+        //        {
+        //            return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+        //        }
+
+        //        return BadRequest("Failed to create movie.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"An error occurred while creating the movie: {ex.Message}");
+        //    }
+        //}
+
         // DELETE: api/Movies/5
+        
+        
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteMovieById(int id)
         {
