@@ -58,6 +58,11 @@ public class FakeMovieRepository : IMovieRepository
         // Ingen handling for mock
         return Task.CompletedTask;
     }
+
+    Task<List<Movie>> IMovieRepository.GetMoviesByGenreId(int genreId)
+    {
+        return Task.FromResult(new List<Movie>());
+    }
 }
 
 // Dummy implementation for IWebHostEnvironment

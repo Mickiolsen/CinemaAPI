@@ -12,5 +12,7 @@ namespace Cinema.Repository.Interfaces
         Task<List<Movie>> GetAllMoviesWithActors();
         Task AddActorToMovie(int movieId, int actorId);
 
+        Task<List<Movie>> GetMoviesByGenreId(int genreId);
+
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Cinema.Repository.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xxx.API.Controllers;
 using xxx.Repository.Models;
 
 namespace CinemaUnitTest
@@ -13,8 +15,9 @@ namespace CinemaUnitTest
     {
             private DbContextOptions<DataContext> options;
             private DataContext context;
+            private MovieController _controller; // Tilføj controller reference
 
-            public GenericRepoMovieTest()
+        public GenericRepoMovieTest()
             {
                 // Opretter en in-memory database for test
                 options = new DbContextOptionsBuilder<DataContext>()
@@ -62,7 +65,8 @@ namespace CinemaUnitTest
                 });
 
                 context.SaveChanges();
-            }
+
+        }
 
             [Fact]
             public async Task GetMovieById_MovieExists()
@@ -170,6 +174,17 @@ namespace CinemaUnitTest
 
                 // Act & Assert
                 await Assert.ThrowsAsync<DbUpdateException>(() => repository.Create(newMovie));
+            }
+
+            [Fact]
+            public async Task GetMoviesByGenreId_NonExistingGenreId_ReturnsNotFound()
+            {
+                // Act
+                var result = await _controller.GetMoviesByGenreId(999); // Antager at 999 ikke eksisterer
+
+                // Assert
+                var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+                Assert.Equal("No movies found for genre ID '999'.", notFoundResult.Value);
             }
     }
 }

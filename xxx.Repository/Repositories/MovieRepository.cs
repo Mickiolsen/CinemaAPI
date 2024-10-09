@@ -34,5 +34,13 @@ namespace Cinema.Repository.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<Movie>> GetMoviesByGenreId(int genreId)
+        {
+            return await _context.Movies
+                .Where(m => m.GenreId == genreId)
+                .ToListAsync();
+        }
+
     }
 }

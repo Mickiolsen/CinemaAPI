@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System;
 using Cinema.Repository.Interfaces;
+using Cinema.Repository.Repositories;
 
 namespace xxx.API.Controllers
 {
@@ -218,6 +219,20 @@ namespace xxx.API.Controllers
             {
                 return StatusCode(500, $"An error occurred while adding the actor to the movie: {ex.Message}");
             }
+        }
+
+
+        [HttpGet("genre/{genreId:int}")]
+        public async Task<ActionResult<List<Movie>>> GetMoviesByGenreId(int genreId)
+        {
+            var movies = await _context2.GetMoviesByGenreId(genreId);
+
+            if (movies == null || !movies.Any())
+            {
+                return NotFound($"No movies found for genre ID '{genreId}'.");
+            }
+
+            return Ok(movies);
         }
 
     }
